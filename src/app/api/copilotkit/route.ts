@@ -1,4 +1,5 @@
-import { HttpAgent } from "@agentwire/client";
+import { MastraAgent } from "@/mastra-agent";
+
 import {
   CopilotRuntime,
   OpenAIAdapter,
@@ -7,7 +8,7 @@ import {
 
 import { NextRequest } from "next/server";
 
-const agenticChat = new HttpAgent({
+const agenticChat = new MastraAgent({
   url: "http://localhost:3000/api/sse/agentic_chat",
 });
 

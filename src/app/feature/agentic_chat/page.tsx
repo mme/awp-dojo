@@ -2,7 +2,11 @@
 import React, { useState } from "react";
 import "@copilotkit/react-ui/styles.css";
 import "./style.css";
-import { CopilotKit, useCopilotAction } from "@copilotkit/react-core";
+import {
+  CopilotKit,
+  useCopilotAction,
+  useCopilotChat,
+} from "@copilotkit/react-core";
 import { CopilotChat } from "@copilotkit/react-ui";
 
 const AgenticChat: React.FC = () => {
@@ -34,7 +38,7 @@ const Chat = () => {
       },
     ],
     handler: ({ background }) => {
-      console.log("background", background);
+      console.log("Changing background to", background);
       setBackground(background);
     },
   });
