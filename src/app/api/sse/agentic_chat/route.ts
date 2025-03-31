@@ -11,6 +11,8 @@ import {
   ToolCallStart,
   ToolCallEnd,
   ToolCallArgs,
+  MessagesSnapshot,
+  Message,
 } from "@agentwire/core";
 import { EventEncoder } from "@agentwire/encoder";
 
@@ -62,25 +64,52 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
   } as TextMessageEnd);
 }
 
-async function sendToolCallEvents(sendEvent: (event: any) => void) {
+async function sendToolCallEvents(
+  sendEvent: (event: any) => void,
+  messages: Message[]
+) {
+  const toolCallId = "change_background";
+  const toolCallName = "change_background";
+  const toolCallArgs = {
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+  };
+
   sendEvent({
     type: EventType.TOOL_CALL_START,
-    tool_call_id: "change_background",
-    tool_call_name: "change_background",
+    tool_call_id: toolCallId,
+    tool_call_name: toolCallName,
   } as ToolCallStart);
 
   sendEvent({
     type: EventType.TOOL_CALL_ARGS,
-    tool_call_id: "change_background",
-    delta: JSON.stringify({
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    }),
+    tool_call_id: toolCallId,
+    delta: JSON.stringify(toolCallArgs),
   } as ToolCallArgs);
 
   sendEvent({
     type: EventType.TOOL_CALL_END,
-    tool_call_id: "change_background",
+    tool_call_id: toolCallId,
   } as ToolCallEnd);
+
+  sendEvent({
+    type: EventType.MESSAGES_SNAPSHOT,
+    messages: [
+      ...messages,
+      {
+        role: "assistant",
+        tool_calls: [
+          {
+            id: toolCallId,
+            type: "function",
+            function: {
+              name: toolCallName,
+              arguments: JSON.stringify(toolCallArgs),
+            },
+          },
+        ],
+      },
+    ],
+  } as MessagesSnapshot);
 }
 
 export async function POST(req: Request) {
@@ -116,7 +145,7 @@ export async function POST(req: Request) {
         } as RunStarted);
 
         if (lastMessageContent === "change_background") {
-          await sendToolCallEvents(sendEvent);
+          await sendToolCallEvents(sendEvent, input.messages);
         } else {
           await sendTextMessageEvents(sendEvent);
         }
