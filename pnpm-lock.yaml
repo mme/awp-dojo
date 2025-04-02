@@ -9,14 +9,17 @@ importers:
   .:
     dependencies:
       '@agentwire/client':
-        specifier: 0.0.18
-        version: 0.0.18
+        specifier: 0.0.19
+        version: 0.0.19
       '@agentwire/core':
-        specifier: 0.0.18
-        version: 0.0.18
+        specifier: 0.0.19
+        version: 0.0.19
       '@agentwire/encoder':
-        specifier: 0.0.18
-        version: 0.0.18
+        specifier: 0.0.19
+        version: 0.0.19
+      '@agentwire/proto':
+        specifier: 0.0.19
+        version: 0.0.19
       '@copilotkit/react-core':
         specifier: 0.0.0-mme-mastra-20250331124527
         version: 0.0.0-mme-mastra-20250331124527(@types/react@19.0.10)(graphql@16.10.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -29,6 +32,9 @@ importers:
       '@copilotkit/runtime-client-gql':
         specifier: 0.0.0-mme-mastra-20250331124527
         version: 0.0.0-mme-mastra-20250331124527(graphql@16.10.0)(react@19.0.0)
+      '@copilotkit/shared':
+        specifier: 0.0.0-mme-mastra-20250331124527
+        version: 0.0.0-mme-mastra-20250331124527
       '@mdx-js/loader':
         specifier: ^3.1.0
         version: 3.1.0(acorn@8.14.1)
@@ -170,11 +176,20 @@ packages:
   '@agentwire/client@0.0.18':
     resolution: {integrity: sha512-pRq9GmvL30G2TAKWcxlkeMkM8fcdJ6QBfCkyTjklnc+Ok9BOY9uTi7Os2q8d88mC0c63eIECliNKjzvcqgHK+A==}
 
+  '@agentwire/client@0.0.19':
+    resolution: {integrity: sha512-msFsHdBpaUf8UBBj0IclGxeSdaRp/6dKksjOOZoJnt3vIJfBQ9qY1FrlBXK+NkzduiRtybD7YCKv1KfpYvv2Jw==}
+
   '@agentwire/core@0.0.18':
     resolution: {integrity: sha512-K+dH8ynjxVtulpqAcB/VnjUfKv00GnCTL5HavrGu7xK5t0Eg6L5TBRMeRQq0mU1MNDdMtzh+xuikIBKEhqpWRg==}
 
-  '@agentwire/encoder@0.0.18':
-    resolution: {integrity: sha512-OBScvkCP55IzxzIeVg/Pu2mcQiESonyD18MDcxh1BSRtlJrfbKzfGFTflJ8nScjmp80uyOKgq+mOZsLwQ6AXzA==}
+  '@agentwire/core@0.0.19':
+    resolution: {integrity: sha512-Mk9x3LoCUYXZPuS4I9pwn7rqvP4eQbyTIPKA/R1j8XavC6fal93N3ulPTV0lwbE4TD9fZ9FDDxdC6G/h6RTsPg==}
+
+  '@agentwire/encoder@0.0.19':
+    resolution: {integrity: sha512-vIu/uZQW3Sw2SUm1XgInz0amvVtvS4MFeQuBQjLHBySUXZKRhNf8kKeiW17gAdhgmEKnVe0rpnEWnRLKszqiPQ==}
+
+  '@agentwire/proto@0.0.19':
+    resolution: {integrity: sha512-cTb8O/CV6rk3B6rKZeX+iDOPf+cl04iE5s2owiPRP+gM5wpH6EGAjP4CmBD8ZrtwVkf6TVje5D/jIx+2j3cSrg==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -198,6 +213,9 @@ packages:
       dotenv: ^16.4.5
       openai: ^4.62.1
       zod: ^3.23.8
+
+  '@bufbuild/protobuf@2.2.5':
+    resolution: {integrity: sha512-/g5EzJifw5GF8aren8wZ/G5oMuPoGeS6MQD3ca8ddcvdXR5UELUfdTZITCGNhNXynY/AYl3Z4plmxdj/tRl/hQ==}
 
   '@cfworker/json-schema@4.1.1':
     resolution: {integrity: sha512-gAmrUZSGtKc3AiBL71iNWxDsyUC5uMaKKGdvzYsBoTW/xi42JQHl7eKV2OYzCUqvc+D2RCcf7EXY2iCyFIk6og==}
@@ -4757,14 +4775,37 @@ snapshots:
       uuid: 11.1.0
       zod: 3.24.2
 
+  '@agentwire/client@0.0.19':
+    dependencies:
+      '@agentwire/core': 0.0.19
+      '@agentwire/encoder': 0.0.19
+      '@agentwire/proto': 0.0.19
+      '@types/uuid': 10.0.0
+      fast-json-patch: 3.1.1
+      rxjs: 7.8.1
+      untruncate-json: 0.0.1
+      uuid: 11.1.0
+      zod: 3.24.2
+
   '@agentwire/core@0.0.18':
     dependencies:
       rxjs: 7.8.1
       zod: 3.24.2
 
-  '@agentwire/encoder@0.0.18':
+  '@agentwire/core@0.0.19':
     dependencies:
-      '@agentwire/core': 0.0.18
+      rxjs: 7.8.1
+      zod: 3.24.2
+
+  '@agentwire/encoder@0.0.19':
+    dependencies:
+      '@agentwire/core': 0.0.19
+      '@agentwire/proto': 0.0.19
+
+  '@agentwire/proto@0.0.19':
+    dependencies:
+      '@agentwire/core': 0.0.19
+      '@bufbuild/protobuf': 2.2.5
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -4811,6 +4852,8 @@ snapshots:
       - bufferutil
       - encoding
       - utf-8-validate
+
+  '@bufbuild/protobuf@2.2.5': {}
 
   '@cfworker/json-schema@4.1.1': {}
 

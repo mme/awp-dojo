@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import {
   EventType,
-  AgentInputSchema,
+  RunAgentInputSchema,
   TextMessageStart,
   TextMessageContent,
   TextMessageEnd,
@@ -25,7 +25,7 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
   sendEvent({
     type: EventType.TEXT_MESSAGE_START,
     timestamp: Date.now(),
-    message_id: messageId,
+    messageId,
     role: "assistant",
   } as TextMessageStart);
 
@@ -33,15 +33,15 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
   sendEvent({
     type: EventType.TEXT_MESSAGE_CONTENT,
     timestamp: Date.now(),
-    message_id: messageId,
-    delta: "Mastra integration in: ",
+    messageId,
+    delta: "Integrating your framework in: ",
   } as TextMessageContent);
 
   for (let count = 10; count >= 1; count--) {
     sendEvent({
       type: EventType.TEXT_MESSAGE_CONTENT,
       timestamp: Date.now(),
-      message_id: messageId,
+      messageId,
       delta: `${count}  `,
     } as TextMessageContent);
 
@@ -52,7 +52,7 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
   sendEvent({
     type: EventType.TEXT_MESSAGE_CONTENT,
     timestamp: Date.now(),
-    message_id: messageId,
+    messageId,
     delta: "✓",
   } as TextMessageContent);
 
@@ -60,7 +60,7 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
   sendEvent({
     type: EventType.TEXT_MESSAGE_END,
     timestamp: Date.now(),
-    message_id: messageId,
+    messageId,
   } as TextMessageEnd);
 }
 
@@ -76,19 +76,19 @@ async function sendToolCallEvents(
 
   sendEvent({
     type: EventType.TOOL_CALL_START,
-    tool_call_id: toolCallId,
-    tool_call_name: toolCallName,
+    toolCallId,
+    toolCallName,
   } as ToolCallStart);
 
   sendEvent({
     type: EventType.TOOL_CALL_ARGS,
-    tool_call_id: toolCallId,
+    toolCallId,
     delta: JSON.stringify(toolCallArgs),
   } as ToolCallArgs);
 
   sendEvent({
     type: EventType.TOOL_CALL_END,
-    tool_call_id: toolCallId,
+    toolCallId,
   } as ToolCallEnd);
 
   sendEvent({
@@ -123,7 +123,7 @@ export async function POST(req: Request) {
   try {
     // Parse and validate the request body
     const body = await req.json();
-    const input = AgentInputSchema.parse(body);
+    const input = RunAgentInputSchema.parse(body);
 
     const timestamp = Date.now();
 
@@ -140,8 +140,8 @@ export async function POST(req: Request) {
         sendEvent({
           type: EventType.RUN_STARTED,
           timestamp,
-          thread_id: input.thread_id,
-          run_id: input.run_id,
+          threadId: input.threadId,
+          runId: input.runId,
         } as RunStarted);
 
         if (lastMessageContent === "change_background") {
@@ -154,8 +154,8 @@ export async function POST(req: Request) {
         sendEvent({
           type: EventType.RUN_FINISHED,
           timestamp: Date.now(),
-          thread_id: input.thread_id,
-          run_id: input.run_id,
+          threadId: input.threadId,
+          runId: input.runId,
         } as RunFinished);
 
         controller.close();
