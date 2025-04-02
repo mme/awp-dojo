@@ -14,7 +14,8 @@ const AgenticChat: React.FC = () => {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
-      agent="agenticChat"
+      // agent lock to the relevant agent
+      agent="agenticChatAgent"
     >
       <Chat />
     </CopilotKit>

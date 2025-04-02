@@ -10,13 +10,12 @@ const HumanInTheLoop: React.FC = () => {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
-      agent="human_in_the_loop"
+      agent="humanInTheLoopAgent"
     >
       <Chat />
     </CopilotKit>
   );
 };
-
 
 const Chat = () => {
   useCopilotAction({
@@ -48,14 +47,25 @@ const Chat = () => {
       <div className="w-8/10 h-8/10 rounded-lg">
         <CopilotChat
           className="h-full rounded-2xl"
-          labels={{ initial: "Hi, I'm an agent specialized in helping you with your tasks. How can I help you?" }}
+          labels={{
+            initial:
+              "Hi, I'm an agent specialized in helping you with your tasks. How can I help you?",
+          }}
         />
       </div>
     </div>
   );
 };
 
-const StepsFeedback = ({ args, respond, status }: { args: any, respond: any, status: any }) => {
+const StepsFeedback = ({
+  args,
+  respond,
+  status,
+}: {
+  args: any;
+  respond: any;
+  status: any;
+}) => {
   const [localSteps, setLocalSteps] = useState<
     {
       description: string;
@@ -157,4 +167,3 @@ function Spinner() {
   );
 }
 export default HumanInTheLoop;
-

@@ -23,7 +23,7 @@ export default function PredictiveStateUpdates() {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
-      agent="predictive_state_updates"
+      agent="predictiveStateUpdatesAgent"
     >
       <div
         className="min-h-screen w-full"
@@ -70,7 +70,7 @@ const DocumentEditor = () => {
     setState: setAgentState,
     nodeName,
   } = useCoAgent<AgentState>({
-    name: "predictive_state_updates",
+    name: "predictiveStateUpdatesAgent",
     initialState: {
       document: "",
     },
@@ -127,21 +127,22 @@ const DocumentEditor = () => {
 
   useCopilotAction({
     name: "confirm_changes",
-    renderAndWaitForResponse: ({ args, respond, status }) => 
-      <ConfirmChanges 
-        args={args} 
-        respond={respond} 
-        status={status} 
+    renderAndWaitForResponse: ({ args, respond, status }) => (
+      <ConfirmChanges
+        args={args}
+        respond={respond}
+        status={status}
         onReject={() => {
           editor?.commands.setContent(fromMarkdown(currentDocument));
           setAgentState({ document: currentDocument });
-        }} 
+        }}
         onConfirm={() => {
           editor?.commands.setContent(fromMarkdown(agentState?.document || ""));
           setCurrentDocument(agentState?.document || "");
-          setAgentState({document: agentState?.document || "",});
+          setAgentState({ document: agentState?.document || "" });
         }}
       />
+    ),
   });
 
   return (
@@ -156,7 +157,6 @@ const DocumentEditor = () => {
   );
 };
 
-
 interface ConfirmChangesProps {
   args: any;
   respond: any;
@@ -165,7 +165,13 @@ interface ConfirmChangesProps {
   onConfirm: () => void;
 }
 
-function ConfirmChanges({ args, respond, status, onReject, onConfirm }: ConfirmChangesProps) {
+function ConfirmChanges({
+  args,
+  respond,
+  status,
+  onReject,
+  onConfirm,
+}: ConfirmChangesProps) {
   const [accepted, setAccepted] = useState<boolean | null>(null);
   return (
     <div className="bg-white p-6 rounded shadow-lg border border-gray-200 mt-5 mb-5">

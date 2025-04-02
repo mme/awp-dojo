@@ -10,7 +10,7 @@ const AgenticGenerativeUI: React.FC = () => {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
-      agent="agentic_generative_ui"
+      agent="agentiveGenerativeUIAgent"
     >
       <Chat />
     </CopilotKit>
@@ -26,7 +26,7 @@ interface AgentState {
 
 const Chat = () => {
   useCoAgentStateRender<AgentState>({
-    name: "agentic_generative_ui",
+    name: "agentiveGenerativeUIAgent",
     render: ({ state }) => {
       if (!state.steps || state.steps.length === 0) {
         return null;
@@ -75,7 +75,10 @@ const Chat = () => {
       <div className="w-8/10 h-8/10 rounded-lg">
         <CopilotChat
           className="h-full rounded-2xl"
-          labels={{ initial: "Hi, I'm an agent! I can help you with anything you need and will show you progress as I work. What can I do for you?" }}
+          labels={{
+            initial:
+              "Hi, I'm an agent! I can help you with anything you need and will show you progress as I work. What can I do for you?",
+          }}
         />
       </div>
     </div>

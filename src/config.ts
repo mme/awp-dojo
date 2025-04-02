@@ -60,19 +60,6 @@ const config: DemoConfig[] = [
       "Use collaboration to edit a document in real time with your Copilot",
     tags: ["State", "Streaming", "Tools"],
   }),
-  createDemoConfig({
-    id: "crew_enterprise",
-    name: "Crew Enterprise",
-    description: "Build AI Agents with CopilotKit + CrewAI",
-    tags: ["Thought Streaming", "Human in the Loop"],
-  }),
-  // TODO: Re-enable after revisiting demo
-  // createDemoConfig({
-  //     id: 'multi_agent_flows',
-  //     name: 'Multi Agent Flows',
-  //     description: 'Chat capability with streaming!',
-  //     tags: ['Generative ui (action)', 'Streaming'],
-  // }),
 ];
 
 export default config;

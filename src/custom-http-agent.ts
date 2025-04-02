@@ -1,6 +1,6 @@
 import { HttpAgent } from "@agentwire/client";
 
-export class MastraAgent extends HttpAgent {
+export class CustomHttpAgent extends HttpAgent {
   /**
    * Returns the fetch config for the http request.
    * Override this to customize the request.

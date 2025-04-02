@@ -1,6 +1,6 @@
 "use client";
 import { CopilotKit, useCoAgent, useCopilotChat } from "@copilotkit/react-core";
-import { CopilotKitCSSProperties, CopilotSidebar } from "@copilotkit/react-ui";
+import { CopilotSidebar } from "@copilotkit/react-ui";
 import { useState, useEffect, useRef } from "react";
 import { Role, TextMessage } from "@copilotkit/runtime-client-gql";
 import "@copilotkit/react-ui/styles.css";
@@ -43,7 +43,7 @@ export default function SharedState() {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
-      agent="shared_state"
+      agent="sharedStateAgent"
     >
       <div
         className="min-h-screen w-full flex items-center justify-center"
@@ -95,7 +95,7 @@ const INITIAL_STATE: RecipeAgentState = {
 function Recipe() {
   const { state: agentState, setState: setAgentState } =
     useCoAgent<RecipeAgentState>({
-      name: "shared_state",
+      name: "sharedStateAgent",
       initialState: INITIAL_STATE,
     });
 
