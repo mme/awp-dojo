@@ -31,11 +31,14 @@ The Demo Viewer should now be running at [http://localhost:3000](http://localhos
 
 On a fresh clone of this repo, you'll find that we've created a mock agent that represents all of the events needed to create an ACP compliant agent. To extend this to support
 your own integration, you'll need to:
-1. Edit `src/mastra-agent.ts` to add your new agent.
-2. Read `src/app/api/sse/agentic_chat/route.ts` to understand what events need to be emitted on the agent side.
+
+1. Edit `src/examples/your-custom-http-agent.ts` to implement your own agent.
+2. Alternatively, edit `src/examples/your-custom-agent.ts` to implement a non http based integration.
+3. Read `src/app/api/sse/agentic_chat/route.ts` to understand what events need to be emitted on the agent side.
 
 ## Project Structure
 
+- `src/examples` - Example agents
 - `src/app` - Next.js app router files
 - `src/components` - Reusable UI components
 - `src/demos` - Demo configuration and utilities
@@ -49,4 +52,4 @@ your own integration, you'll need to:
 - React
 - TypeScript
 - Tailwind CSS
-- CopilotKit 
+- CopilotKit
