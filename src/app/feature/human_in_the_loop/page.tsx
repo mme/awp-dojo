@@ -10,6 +10,7 @@ const HumanInTheLoop: React.FC = () => {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
+      // agent lock to the relevant agent
       agent="humanInTheLoopAgent"
     >
       <Chat />

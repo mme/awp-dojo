@@ -1,4 +1,5 @@
-import { CustomHttpAgent } from "@/custom-http-agent";
+import { CustomHttpAgent } from "@/examples/your-custom-http-agent";
+import { StochasticParrotAgent } from "@/examples/stochastic-parrot";
 
 import {
   CopilotRuntime,
@@ -34,6 +35,8 @@ const toolBasedGenerativeUIAgent = new CustomHttpAgent({
   url: `${BASE_URL}/api/sse/tool_based_generative_ui_mock`,
 });
 
+const stochasticParrotAgent = new StochasticParrotAgent();
+
 const runtime = new CopilotRuntime({
   agents: {
     agenticChatAgent,
@@ -42,6 +45,7 @@ const runtime = new CopilotRuntime({
     predictiveStateUpdatesAgent,
     sharedStateAgent,
     toolBasedGenerativeUIAgent,
+    stochasticParrotAgent,
   },
 });
 

@@ -10,6 +10,7 @@ export default function AgenticChat() {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
+      // agent lock to the relevant agent
       agent="toolBasedGenerativeUIAgent"
     >
       <div

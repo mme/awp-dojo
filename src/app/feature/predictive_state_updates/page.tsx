@@ -23,6 +23,7 @@ export default function PredictiveStateUpdates() {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
+      // agent lock to the relevant agent
       agent="predictiveStateUpdatesAgent"
     >
       <div

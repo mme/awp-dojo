@@ -43,6 +43,7 @@ export default function SharedState() {
     <CopilotKit
       runtimeUrl="/api/copilotkit"
       showDevConsole={false}
+      // agent lock to the relevant agent
       agent="sharedStateAgent"
     >
       <div

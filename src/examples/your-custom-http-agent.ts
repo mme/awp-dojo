@@ -7,7 +7,7 @@ export class CustomHttpAgent extends HttpAgent {
    *
    * @returns The fetch config for the http request.
    */
-  // protected requestInit(input: AgentInput): RequestInit {
+  // protected requestInit(input: RunAgentInput): RequestInit {
   //   return {
   //     method: "POST",
   //     headers: {
@@ -18,5 +18,11 @@ export class CustomHttpAgent extends HttpAgent {
   //     body: JSON.stringify(input),
   //     signal: this.abortController.signal,
   //   };
+  // }
+  // run(input: RunAgentInput): RunAgent<HttpEvent> {
+  //   return withRunHttpRequest(this.url, this.requestInit(input));
+  // }
+  // transform(input: RunAgentInput): TransformEvents<HttpEvent> {
+  //   return transformHttpEventStream;
   // }
 }
