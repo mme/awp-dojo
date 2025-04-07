@@ -8,6 +8,7 @@ import {
 } from "@copilotkit/runtime";
 
 import { NextRequest } from "next/server";
+import { MastraAgent } from "@/examples/mastra-agent";
 
 const BASE_URL = "http://localhost:3000";
 
@@ -37,9 +38,13 @@ const toolBasedGenerativeUIAgent = new CustomHttpAgent({
 
 const stochasticParrotAgent = new StochasticParrotAgent();
 
+const weatherAgent = new MastraAgent({
+  agentId: "weatherAgent",
+});
+
 const runtime = new CopilotRuntime({
   agents: {
-    agenticChatAgent,
+    weatherAgent,
     agentiveGenerativeUIAgent,
     humanInTheLoopAgent,
     predictiveStateUpdatesAgent,
