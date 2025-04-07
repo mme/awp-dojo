@@ -3,14 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 import {
   EventType,
   RunAgentInputSchema,
-  TextMessageStart,
-  TextMessageContent,
-  TextMessageEnd,
-  RunStarted,
-  RunFinished,
-  ToolCallStart,
-  ToolCallEnd,
-  ToolCallArgs,
+  TextMessageStartEvent,
+  TextMessageContentEvent,
+  TextMessageEndEvent,
+  RunStartedEvent,
+  RunFinishedEvent,
+  ToolCallStartEvent,
+  ToolCallEndEvent,
+  ToolCallArgsEvent,
   Message,
 } from "@agentwire/core";
 import { EventEncoder } from "@agentwire/encoder";
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_STARTED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunStarted);
+        } as RunStartedEvent);
 
         if (lastMessage.role === "tool") {
           await sendTextMessageEvents(sendEvent);
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_FINISHED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunFinished);
+        } as RunFinishedEvent);
 
         controller.close();
       },
@@ -82,13 +82,13 @@ async function sendToolCallEvents(sendEvent: (event: any) => void) {
     type: EventType.TOOL_CALL_START,
     toolCallId,
     toolCallName,
-  } as ToolCallStart);
+  } as ToolCallStartEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_ARGS,
     toolCallId,
     delta: '{"steps":[',
-  } as ToolCallArgs);
+  } as ToolCallArgsEvent);
 
   for (let i = 0; i < 10; i++) {
     sendEvent({
@@ -99,7 +99,7 @@ async function sendToolCallEvents(sendEvent: (event: any) => void) {
           description: "Step " + (i + 1),
           status: "enabled",
         }) + (i != 9 ? "," : ""),
-    } as ToolCallArgs);
+    } as ToolCallArgsEvent);
     await sleep(200);
   }
 
@@ -107,12 +107,12 @@ async function sendToolCallEvents(sendEvent: (event: any) => void) {
     type: EventType.TOOL_CALL_ARGS,
     toolCallId,
     delta: "]}",
-  } as ToolCallArgs);
+  } as ToolCallArgsEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_END,
     toolCallId,
-  } as ToolCallEnd);
+  } as ToolCallEndEvent);
 }
 
 async function sendTextMessageEvents(sendEvent: (event: any) => void) {
@@ -123,18 +123,18 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
     type: EventType.TEXT_MESSAGE_START,
     messageId,
     role: "assistant",
-  } as TextMessageStart);
+  } as TextMessageStartEvent);
 
   // Initial content chunk
   sendEvent({
     type: EventType.TEXT_MESSAGE_CONTENT,
     messageId,
     delta: "Ok! I'm working on it.",
-  } as TextMessageContent);
+  } as TextMessageContentEvent);
 
   // End of message
   sendEvent({
     type: EventType.TEXT_MESSAGE_END,
     messageId,
-  } as TextMessageEnd);
+  } as TextMessageEndEvent);
 }

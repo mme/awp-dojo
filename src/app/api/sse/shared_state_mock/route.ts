@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import {
   EventType,
   RunAgentInputSchema,
-  RunStarted,
-  RunFinished,
-  StateSnapshot,
+  RunStartedEvent,
+  RunFinishedEvent,
+  StateSnapshotEvent,
 } from "@agentwire/core";
 import { EventEncoder } from "@agentwire/encoder";
 
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_STARTED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunStarted);
+        } as RunStartedEvent);
 
         await sendStateEvents(sendEvent);
 
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_FINISHED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunFinished);
+        } as RunFinishedEvent);
 
         controller.close();
       },
@@ -76,5 +76,5 @@ async function sendStateEvents(sendEvent: (event: any) => void) {
   sendEvent({
     type: EventType.STATE_SNAPSHOT,
     snapshot: state,
-  } as StateSnapshot);
+  } as StateSnapshotEvent);
 }

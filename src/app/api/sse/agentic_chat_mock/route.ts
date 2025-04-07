@@ -3,15 +3,15 @@ import { v4 as uuidv4 } from "uuid";
 import {
   EventType,
   RunAgentInputSchema,
-  TextMessageStart,
-  TextMessageContent,
-  TextMessageEnd,
-  RunStarted,
-  RunFinished,
-  ToolCallStart,
-  ToolCallEnd,
-  ToolCallArgs,
-  MessagesSnapshot,
+  TextMessageStartEvent,
+  TextMessageContentEvent,
+  TextMessageEndEvent,
+  RunStartedEvent,
+  RunFinishedEvent,
+  ToolCallStartEvent,
+  ToolCallEndEvent,
+  ToolCallArgsEvent,
+  MessagesSnapshotEvent,
   Message,
 } from "@agentwire/core";
 import { EventEncoder } from "@agentwire/encoder";
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_STARTED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunStarted);
+        } as RunStartedEvent);
 
         if (lastMessageContent === "tool") {
           await sendToolCallEvents(sendEvent, input.messages);
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_FINISHED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunFinished);
+        } as RunFinishedEvent);
 
         controller.close();
       },
@@ -84,21 +84,21 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
     type: EventType.TEXT_MESSAGE_START,
     messageId,
     role: "assistant",
-  } as TextMessageStart);
+  } as TextMessageStartEvent);
 
   // Initial content chunk
   sendEvent({
     type: EventType.TEXT_MESSAGE_CONTENT,
     messageId,
     delta: "Integrating your framework in: ",
-  } as TextMessageContent);
+  } as TextMessageContentEvent);
 
   for (let count = 10; count >= 1; count--) {
     sendEvent({
       type: EventType.TEXT_MESSAGE_CONTENT,
       messageId,
       delta: `${count}  `,
-    } as TextMessageContent);
+    } as TextMessageContentEvent);
 
     await sleep(300);
   }
@@ -108,13 +108,13 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
     type: EventType.TEXT_MESSAGE_CONTENT,
     messageId,
     delta: "✓",
-  } as TextMessageContent);
+  } as TextMessageContentEvent);
 
   // End of message
   sendEvent({
     type: EventType.TEXT_MESSAGE_END,
     messageId,
-  } as TextMessageEnd);
+  } as TextMessageEndEvent);
 
   // sending a final messages snapshot is optional, see sendToolCallEvents for an example
 }
@@ -133,18 +133,18 @@ async function sendToolCallEvents(
     type: EventType.TOOL_CALL_START,
     toolCallId,
     toolCallName,
-  } as ToolCallStart);
+  } as ToolCallStartEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_ARGS,
     toolCallId,
     delta: JSON.stringify(toolCallArgs),
-  } as ToolCallArgs);
+  } as ToolCallArgsEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_END,
     toolCallId,
-  } as ToolCallEnd);
+  } as ToolCallEndEvent);
 
   sendEvent({
     type: EventType.MESSAGES_SNAPSHOT,
@@ -165,5 +165,5 @@ async function sendToolCallEvents(
         ],
       },
     ],
-  } as MessagesSnapshot);
+  } as MessagesSnapshotEvent);
 }

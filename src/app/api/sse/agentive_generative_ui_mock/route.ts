@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import {
   EventType,
   RunAgentInputSchema,
-  RunStarted,
-  RunFinished,
-  StateSnapshot,
-  StateDelta,
+  RunStartedEvent,
+  RunFinishedEvent,
+  StateSnapshotEvent,
+  StateDeltaEvent,
 } from "@agentwire/core";
 import { EventEncoder } from "@agentwire/encoder";
 import * as jsonPatch from "fast-json-patch";
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_STARTED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunStarted);
+        } as RunStartedEvent);
 
         await sendStateEvents(sendEvent);
 
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_FINISHED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunFinished);
+        } as RunFinishedEvent);
 
         controller.close();
       },
@@ -74,7 +74,7 @@ async function sendStateEvents(sendEvent: (event: any) => void) {
   sendEvent({
     type: EventType.STATE_SNAPSHOT,
     snapshot: state,
-  } as StateSnapshot);
+  } as StateSnapshotEvent);
   await sleep(1000);
 
   // tracking the state changes allows us to send only the delta to the client
@@ -89,7 +89,7 @@ async function sendStateEvents(sendEvent: (event: any) => void) {
     sendEvent({
       type: EventType.STATE_DELTA,
       delta: patch,
-    } as StateDelta);
+    } as StateDeltaEvent);
     await sleep(1000);
   }
 
@@ -97,5 +97,5 @@ async function sendStateEvents(sendEvent: (event: any) => void) {
   sendEvent({
     type: EventType.STATE_SNAPSHOT,
     snapshot: state,
-  } as StateSnapshot);
+  } as StateSnapshotEvent);
 }

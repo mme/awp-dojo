@@ -3,9 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import {
   EventType,
   RunAgentInputSchema,
-  RunStarted,
-  RunFinished,
-  MessagesSnapshot,
+  RunStartedEvent,
+  RunFinishedEvent,
+  MessagesSnapshotEvent,
 } from "@agentwire/core";
 import { EventEncoder } from "@agentwire/encoder";
 
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_STARTED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunStarted);
+        } as RunStartedEvent);
 
         // send a messages snapshot
         sendEvent({
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
                     arguments: JSON.stringify({
                       japanese: ["エーアイの", "橋つなぐ道", "コパキット"],
                       english: [
-                        "From AI’s realm",
+                        "From AI's realm",
                         "A bridge-road linking us—",
                         "CopilotKit.",
                       ],
@@ -61,14 +61,14 @@ export async function POST(req: Request) {
               ],
             },
           ],
-        } as MessagesSnapshot);
+        } as MessagesSnapshotEvent);
 
         // Last event must be run_finished
         sendEvent({
           type: EventType.RUN_FINISHED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunFinished);
+        } as RunFinishedEvent);
 
         controller.close();
       },

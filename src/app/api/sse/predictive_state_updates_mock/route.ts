@@ -3,14 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 import {
   EventType,
   RunAgentInputSchema,
-  TextMessageStart,
-  TextMessageContent,
-  TextMessageEnd,
-  RunStarted,
-  RunFinished,
-  ToolCallStart,
-  ToolCallEnd,
-  ToolCallArgs,
+  TextMessageStartEvent,
+  TextMessageContentEvent,
+  TextMessageEndEvent,
+  RunStartedEvent,
+  RunFinishedEvent,
+  ToolCallStartEvent,
+  ToolCallEndEvent,
+  ToolCallArgsEvent,
   Message,
   CustomEvent,
 } from "@agentwire/core";
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_STARTED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunStarted);
+        } as RunStartedEvent);
 
         if (lastMessage.role === "tool") {
           await sendTextMessageEvents(sendEvent);
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
           type: EventType.RUN_FINISHED,
           threadId: input.threadId,
           runId: input.runId,
-        } as RunFinished);
+        } as RunFinishedEvent);
 
         controller.close();
       },
@@ -92,7 +92,7 @@ async function sendToolCallEvents(sendEvent: (event: any) => void) {
   const storyChunks = story.split(" ");
 
   sendEvent({
-    type: EventType.CUSTOM_EVENT,
+    type: EventType.CUSTOM,
     name: "PredictState",
     value: [
       {
@@ -107,20 +107,20 @@ async function sendToolCallEvents(sendEvent: (event: any) => void) {
     type: EventType.TOOL_CALL_START,
     toolCallId,
     toolCallName,
-  } as ToolCallStart);
+  } as ToolCallStartEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_ARGS,
     toolCallId,
     delta: '{"document":"',
-  } as ToolCallArgs);
+  } as ToolCallArgsEvent);
 
   for (let i = 0; i < storyChunks.length; i++) {
     sendEvent({
       type: EventType.TOOL_CALL_ARGS,
       toolCallId,
       delta: storyChunks[i] + " ",
-    } as ToolCallArgs);
+    } as ToolCallArgsEvent);
     await sleep(200);
   }
 
@@ -128,12 +128,12 @@ async function sendToolCallEvents(sendEvent: (event: any) => void) {
     type: EventType.TOOL_CALL_ARGS,
     toolCallId,
     delta: '"}',
-  } as ToolCallArgs);
+  } as ToolCallArgsEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_END,
     toolCallId,
-  } as ToolCallEnd);
+  } as ToolCallEndEvent);
 
   const toolCallId2 = uuidv4();
   const toolCallName2 = "confirm_changes";
@@ -142,18 +142,18 @@ async function sendToolCallEvents(sendEvent: (event: any) => void) {
     type: EventType.TOOL_CALL_START,
     toolCallId: toolCallId2,
     toolCallName: toolCallName2,
-  } as ToolCallStart);
+  } as ToolCallStartEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_ARGS,
     toolCallId: toolCallId2,
     delta: "{}",
-  } as ToolCallArgs);
+  } as ToolCallArgsEvent);
 
   sendEvent({
     type: EventType.TOOL_CALL_END,
     toolCallId: toolCallId2,
-  } as ToolCallEnd);
+  } as ToolCallEndEvent);
 }
 
 async function sendTextMessageEvents(sendEvent: (event: any) => void) {
@@ -164,18 +164,18 @@ async function sendTextMessageEvents(sendEvent: (event: any) => void) {
     type: EventType.TEXT_MESSAGE_START,
     messageId,
     role: "assistant",
-  } as TextMessageStart);
+  } as TextMessageStartEvent);
 
   // Initial content chunk
   sendEvent({
     type: EventType.TEXT_MESSAGE_CONTENT,
     messageId,
     delta: "Ok!",
-  } as TextMessageContent);
+  } as TextMessageContentEvent);
 
   // End of message
   sendEvent({
     type: EventType.TEXT_MESSAGE_END,
     messageId,
-  } as TextMessageEnd);
+  } as TextMessageEndEvent);
 }
