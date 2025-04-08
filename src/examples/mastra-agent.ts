@@ -11,6 +11,9 @@ import {
   TextMessageContentEvent,
   TextMessageEndEvent,
   Message,
+  ToolCallStartEvent,
+  ToolCallArgsEvent,
+  ToolCallEndEvent,
 } from "@agentwire/client";
 
 import { v4 as uuidv4 } from "uuid";
@@ -39,6 +42,7 @@ export class MastraAgent extends AbstractAgent {
     return () => {
       const agent = this.mastraClient.getAgent(this.agentId!);
       return new Observable<BaseEvent>((subscriber) => {
+        console.log("tools", JSON.stringify(input.tools, null, 2));
         // Emit run started event
         subscriber.next({
           type: EventType.RUN_STARTED,
@@ -76,6 +80,7 @@ export class MastraAgent extends AbstractAgent {
                 subscriber.next(message);
               },
               onFinishMessagePart: (message) => {
+                console.log("onFinishMessagePart", message);
                 if (currentMessageId !== undefined) {
                   const message: TextMessageEndEvent = {
                     type: EventType.TEXT_MESSAGE_END,
@@ -92,6 +97,33 @@ export class MastraAgent extends AbstractAgent {
 
                 // Complete the observable
                 subscriber.complete();
+              },
+              onToolCallPart(streamPart) {
+                subscriber.next({
+                  type: EventType.TOOL_CALL_START,
+                  toolCallId: streamPart.toolCallId,
+                  toolCallName: streamPart.toolName,
+                } as ToolCallStartEvent);
+
+                subscriber.next({
+                  type: EventType.TOOL_CALL_ARGS,
+                  toolCallId: streamPart.toolCallId,
+                  delta: JSON.stringify(streamPart.args),
+                } as ToolCallArgsEvent);
+
+                subscriber.next({
+                  type: EventType.TOOL_CALL_END,
+                  toolCallId: streamPart.toolCallId,
+                } as ToolCallEndEvent);
+              },
+              onToolCallDeltaPart(streamPart) {
+                console.log("onToolCallDeltaPart", streamPart);
+              },
+              onToolCallStreamingStartPart(streamPart) {
+                console.log("onToolCallStreamingStartPart", streamPart);
+              },
+              onToolResultPart(streamPart) {
+                console.log("onToolResultPart", streamPart);
               },
             });
           })
@@ -122,6 +154,18 @@ function convertMessagesToMastraMessages(messages: Message[]): CoreMessage[] {
       result.push({
         role: "user",
         content: message.content || "",
+      });
+    } else if (message.role === "tool") {
+      result.push({
+        role: "tool",
+        content: [
+          {
+            type: "tool-result",
+            toolCallId: message.toolCallId,
+            toolName: "unknown",
+            result: message.content,
+          },
+        ],
       });
     }
   }

@@ -28,7 +28,7 @@ const Chat = () => {
   );
 
   useCopilotAction({
-    name: "change_background",
+    name: "changeBackgroundTool",
     description:
       "Change the background color of the chat. Can be anything that the CSS background attribute accepts. Regular colors, linear of radial gradients etc.",
     parameters: [
