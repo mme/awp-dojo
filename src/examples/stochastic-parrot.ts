@@ -8,46 +8,44 @@ import {
 import { Observable } from "rxjs";
 
 export class StochasticParrotAgent extends AbstractAgent {
-  protected run(input: RunAgentInput): RunAgent {
-    return () => {
-      const messages = input.messages;
-      const lastUserMessage =
-        messages.findLast((msg) => msg.role === "user")?.content ||
-        "My life is complicated";
-      const response = StochasticParrotTherapist.completion(lastUserMessage);
-      const messageId = Date.now().toString();
-      return new Observable<BaseEvent>((observer) => {
-        observer.next({
-          type: EventType.RUN_STARTED,
-          threadId: input.threadId,
-          runId: input.runId,
-        } as any);
+  protected run(input: RunAgentInput): Observable<BaseEvent> {
+    const messages = input.messages;
+    const lastUserMessage =
+      messages.findLast((msg) => msg.role === "user")?.content ||
+      "My life is complicated";
+    const response = StochasticParrotTherapist.completion(lastUserMessage);
+    const messageId = Date.now().toString();
+    return new Observable<BaseEvent>((observer) => {
+      observer.next({
+        type: EventType.RUN_STARTED,
+        threadId: input.threadId,
+        runId: input.runId,
+      } as any);
 
-        observer.next({
-          type: EventType.TEXT_MESSAGE_START,
-          messageId,
-        } as any);
+      observer.next({
+        type: EventType.TEXT_MESSAGE_START,
+        messageId,
+      } as any);
 
-        observer.next({
-          type: EventType.TEXT_MESSAGE_CONTENT,
-          messageId,
-          delta: response,
-        } as any);
+      observer.next({
+        type: EventType.TEXT_MESSAGE_CONTENT,
+        messageId,
+        delta: response,
+      } as any);
 
-        observer.next({
-          type: EventType.TEXT_MESSAGE_END,
-          messageId,
-        } as any);
+      observer.next({
+        type: EventType.TEXT_MESSAGE_END,
+        messageId,
+      } as any);
 
-        observer.next({
-          type: EventType.RUN_FINISHED,
-          threadId: input.threadId,
-          runId: input.runId,
-        } as any);
+      observer.next({
+        type: EventType.RUN_FINISHED,
+        threadId: input.threadId,
+        runId: input.runId,
+      } as any);
 
-        observer.complete();
-      });
-    };
+      observer.complete();
+    });
   }
 }
 
