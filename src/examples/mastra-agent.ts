@@ -40,9 +40,14 @@ export class MastraAgent extends AbstractAgent {
 
   protected run(input: RunAgentInput): Observable<BaseEvent> {
     const agent = this.mastraClient.getAgent(this.agentId!);
+
+    console.log(agent);
+
     return new Observable<BaseEvent>((subscriber) => {
-      console.log("tools", JSON.stringify(input.tools, null, 2));
-      // Emit run started event
+      const convertedMessages = convertMessagesToMastraMessages(input.messages);
+
+      // console.log("tools", JSON.stringify(input.tools, null, 2));
+      // // Emit run started event
       subscriber.next({
         type: EventType.RUN_STARTED,
         threadId: input.threadId,
@@ -53,7 +58,7 @@ export class MastraAgent extends AbstractAgent {
         .stream({
           threadId: input.threadId,
           runId: input.runId,
-          messages: convertMessagesToMastraMessages(input.messages),
+          messages: convertedMessages,
         })
         .then((response) => {
           let currentMessageId: string | undefined = undefined;
@@ -127,6 +132,7 @@ export class MastraAgent extends AbstractAgent {
           });
         })
         .catch((error) => {
+          console.log("error", error);
           // Handle error
           subscriber.error(error);
         });
@@ -144,9 +150,20 @@ function convertMessagesToMastraMessages(messages: Message[]): CoreMessage[] {
 
   for (const message of messages) {
     if (message.role === "assistant") {
+      const parts: any[] = message.content
+        ? [{ type: "text", text: message.content }]
+        : [];
+      for (const toolCall of message.toolCalls ?? []) {
+        parts.push({
+          type: "tool-call",
+          toolCallId: toolCall.id,
+          toolName: toolCall.function.name,
+          args: JSON.parse(toolCall.function.arguments),
+        });
+      }
       result.push({
         role: "assistant",
-        content: message.content || "",
+        content: parts,
       });
     } else if (message.role === "user") {
       result.push({

@@ -12,9 +12,9 @@ import { MastraAgent } from "@/examples/mastra-agent";
 
 const BASE_URL = "http://localhost:3000";
 
-const agenticChatAgent = new CustomHttpAgent({
-  url: `${BASE_URL}/api/sse/agentic_chat_mock`,
-});
+// const agenticChatAgent = new CustomHttpAgent({
+//   url: `${BASE_URL}/api/sse/agentic_chat_mock`,
+// });
 
 const agentiveGenerativeUIAgent = new CustomHttpAgent({
   url: `${BASE_URL}/api/sse/agentive_generative_ui_mock`,
@@ -38,13 +38,13 @@ const toolBasedGenerativeUIAgent = new CustomHttpAgent({
 
 const stochasticParrotAgent = new StochasticParrotAgent();
 
-const weatherAgent = new MastraAgent({
-  agentId: "weatherAgent",
+const agenticChatAgent = new MastraAgent({
+  agentId: "agenticChatAgent",
 });
 
 const runtime = new CopilotRuntime({
   agents: {
-    weatherAgent,
+    agenticChatAgent,
     agentiveGenerativeUIAgent,
     humanInTheLoopAgent,
     predictiveStateUpdatesAgent,
