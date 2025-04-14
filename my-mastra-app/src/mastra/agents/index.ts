@@ -1,6 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { Agent } from "@mastra/core/agent";
 import { changeBackgroundTool } from "../tools";
+import { Memory } from "@mastra/memory";
 
 export const agenticChatAgent = new Agent({
   name: "Agentic Chat Agent",
@@ -9,5 +10,6 @@ export const agenticChatAgent = new Agent({
       In addition, you can change the background color of the chat window.
 `,
   model: openai("gpt-4o"),
-  tools: { changeBackgroundTool },
+  memory: new Memory(),
+  // tools: { changeBackgroundTool },
 });

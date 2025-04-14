@@ -42,7 +42,7 @@ const Chat = () => {
       console.log("Changing background to", background);
       setBackground(background);
     },
-    followUp: false,
+    // followUp: false,
   });
 
   return (

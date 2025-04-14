@@ -24,13 +24,16 @@ import { CoreMessage } from "@mastra/core";
 interface MastraAgentConfig extends AgentConfig {
   mastraClient?: MastraClient;
   agentId: string;
+  resourceId?: string;
 }
 
 export class MastraAgent extends AbstractAgent {
   mastraClient: MastraClient;
-
+  resourceId?: string;
   constructor(config: MastraAgentConfig) {
     super(config);
+    this.resourceId = config.resourceId;
+
     this.mastraClient =
       config?.mastraClient ??
       new MastraClient({
@@ -54,11 +57,27 @@ export class MastraAgent extends AbstractAgent {
         runId: input.runId,
       } as RunStartedEvent);
 
+      // {
+      //   id: "changeBackgroundTool",
+      //   description: "Change the background with a CSS gradient",
+      //   inputSchema: {
+
+      //   }
+      // }
       agent
         .stream({
           threadId: input.threadId,
+          resourceId: this.resourceId,
           runId: input.runId,
           messages: convertedMessages,
+          clientTools: input.tools.reduce((acc, tool) => {
+            acc[tool.name as string] = {
+              id: tool.name,
+              description: tool.description,
+              inputSchema: tool.parameters,
+            };
+            return acc;
+          }, {} as Record<string, any>),
         })
         .then((response) => {
           let currentMessageId: string | undefined = undefined;
