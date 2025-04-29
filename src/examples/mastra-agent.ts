@@ -23,16 +23,15 @@ import { CoreMessage } from "@mastra/core";
 
 interface MastraAgentConfig extends AgentConfig {
   mastraClient?: MastraClient;
-  agentId: string;
   resourceId?: string;
 }
 
 export class MastraAgent extends AbstractAgent {
   mastraClient: MastraClient;
   resourceId?: string;
-  constructor(config: MastraAgentConfig) {
+  constructor(config?: MastraAgentConfig) {
     super(config);
-    this.resourceId = config.resourceId;
+    this.resourceId = config?.resourceId;
 
     this.mastraClient =
       config?.mastraClient ??
@@ -42,32 +41,22 @@ export class MastraAgent extends AbstractAgent {
   }
 
   protected run(input: RunAgentInput): Observable<BaseEvent> {
-    const agent = this.mastraClient.getAgent(this.agentId!);
-
-    console.log(agent);
+    const agentId = this.agentId ?? uuidv4();
+    const agent = this.mastraClient.getAgent(agentId);
 
     return new Observable<BaseEvent>((subscriber) => {
       const convertedMessages = convertMessagesToMastraMessages(input.messages);
 
-      // console.log("tools", JSON.stringify(input.tools, null, 2));
-      // // Emit run started event
       subscriber.next({
         type: EventType.RUN_STARTED,
         threadId: input.threadId,
         runId: input.runId,
       } as RunStartedEvent);
 
-      // {
-      //   id: "changeBackgroundTool",
-      //   description: "Change the background with a CSS gradient",
-      //   inputSchema: {
-
-      //   }
-      // }
       agent
         .stream({
           threadId: input.threadId,
-          resourceId: this.resourceId,
+          resourceId: this.resourceId ?? agentId,
           runId: input.runId,
           messages: convertedMessages,
           clientTools: input.tools.reduce((acc, tool) => {
@@ -122,32 +111,30 @@ export class MastraAgent extends AbstractAgent {
               subscriber.complete();
             },
             onToolCallPart(streamPart) {
+              const parentMessageId = currentMessageId || uuidv4();
               subscriber.next({
                 type: EventType.TOOL_CALL_START,
                 toolCallId: streamPart.toolCallId,
                 toolCallName: streamPart.toolName,
+                parentMessageId,
               } as ToolCallStartEvent);
 
               subscriber.next({
                 type: EventType.TOOL_CALL_ARGS,
                 toolCallId: streamPart.toolCallId,
                 delta: JSON.stringify(streamPart.args),
+                parentMessageId,
               } as ToolCallArgsEvent);
 
               subscriber.next({
                 type: EventType.TOOL_CALL_END,
                 toolCallId: streamPart.toolCallId,
+                parentMessageId,
               } as ToolCallEndEvent);
             },
-            onToolCallDeltaPart(streamPart) {
-              console.log("onToolCallDeltaPart", streamPart);
-            },
-            onToolCallStreamingStartPart(streamPart) {
-              console.log("onToolCallStreamingStartPart", streamPart);
-            },
-            onToolResultPart(streamPart) {
-              console.log("onToolResultPart", streamPart);
-            },
+            onToolCallDeltaPart(streamPart) {},
+            onToolCallStreamingStartPart(streamPart) {},
+            onToolResultPart(streamPart) {},
           });
         })
         .catch((error) => {
@@ -156,10 +143,7 @@ export class MastraAgent extends AbstractAgent {
           subscriber.error(error);
         });
 
-      // Return unsubscribe function
-      return () => {
-        // Cleanup logic if needed
-      };
+      return () => {};
     });
   }
 }
